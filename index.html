@@ -275,13 +275,9 @@
       height: 100px;
       border-radius: 25px;
       border: 1px solid white;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      text-align: center;
       opacity: 0.1;
       transition: all 0.2s;
-      margin: 0px 10px;
+      margin: 10px 10px;
       -webkit-transition: all 0.2s;
       -moz-transition: all 0.2s;
       -ms-transition: all 0.2s;
@@ -841,7 +837,6 @@
         let spanBtn = document.createElement("div");
         spanBtn.classList.add("nav-btn");
         spanBtn.style.display = "flex";
-        spanBtn.style.flexWrap = "wrap";
         spanBtn.style.flexDirection = "column";
         spanBtn.style.justifyContent = "flex-end";
         spanBtn.style.position = "relative";
@@ -875,10 +870,11 @@
         imageContainerChild.style.width = "100%";
         imageContainerChild.style.display = "flex";
         imageContainerChild.style.justifyContent = "center";
-        imageContainerChild.style.paddingBottom = "10px";
+        imageContainerChild.style.paddingBottom = "5px";
         let imageChild = document.createElement("img");
         imageChild.style.width = "auto";
         imageChild.style.maxWidth = "64px";
+        imageChild.style.minWidth = "32px";
         imageChild.style.height = "auto";
         imageChild.src = config.links[index].favicon;
         imageContainerChild.appendChild(imageChild);
