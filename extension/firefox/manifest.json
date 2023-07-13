@@ -1,0 +1,17 @@
+{
+  "manifest_version": 2,
+  "name": "HomePage",
+  "version": "1.0",
+  "description": "Extension to add a custom home page",
+  "icons": {
+    "48": "icons/icon_48.png",
+    "96": "icons/icon_96.png"
+  },
+  "background": {
+    "scripts": ["background.js"]
+  },
+  "chrome_url_overrides": {
+    "newtab": "index.html"
+  },
+  "permissions": ["tabs"]
+}
