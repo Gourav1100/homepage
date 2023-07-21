@@ -190,11 +190,11 @@ body {
   padding: 5px;
   margin: 10px;
   text-align: start;
-  transition: all 0.2s, width 0.2s ease-in-out 5s;
-  -webkit-transition: all 0.2s, width 0.2s ease-in-out 5s;
-  -moz-transition: all 0.2s, width 0.2s ease-in-out 5s;
-  -ms-transition: all 0.2s, width 0.2s ease-in-out 5s;
-  -o-transition: all 0.2s, width 0.2s ease-in-out 5s;
+  transition: all 0.2s, width 0.2s ease-in-out 1s;
+  -webkit-transition: all 0.2s, width 0.2s ease-in-out 1s;
+  -moz-transition: all 0.2s, width 0.2s ease-in-out 1s;
+  -ms-transition: all 0.2s, width 0.2s ease-in-out 1s;
+  -o-transition: all 0.2s, width 0.2s ease-in-out 1s;
 }
 .searchbar:focus {
   border-bottom: 2px solid white;

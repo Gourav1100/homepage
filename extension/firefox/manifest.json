@@ -1,6 +1,6 @@
 {
   "manifest_version": 2,
-  "name": "HomePage",
+  "name": "Custom New Tab",
   "version": "1.0",
   "description": "Extension to add a custom home page",
   "icons": {
@@ -13,5 +13,11 @@
   "chrome_url_overrides": {
     "newtab": "index.html"
   },
-  "permissions": ["tabs"]
+  "author": "Gourav Bidhuri",
+  "permissions": ["tabs"],
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "gauravb1100@gmail.com"
+    }
+  }
 }

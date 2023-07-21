@@ -1,6 +1,7 @@
 let buttonTimeOutList = [];
 let buttonTimeClassMap = {};
 let searchBtnTimeoutHandler = -1;
+let searchbarErrorTimeoutHandler = -1;
 function getDate() {
   const date = new Date();
   // prettier-ignore
@@ -39,6 +40,7 @@ function loadConfig() {
     links: [],
     username: "User",
     wallpaper: "https://i.imgur.com/lSbtiRw.jpg",
+    action: "https://www.google.com/search",
   };
   localStorage.setItem("config", JSON.stringify(initializationObject));
   return initializationObject;
@@ -101,6 +103,16 @@ function disableButton(targetClassName) {
     buttonTimeClassMap[timeout] = targetClassName;
     buttonTimeOutList.push(timeout);
   }
+  removeBtn_1_children();
+}
+function removeBtn_1_children() {
+  if (document.getElementsByClassName("btn-1-engine-container").length) {
+    [...document.getElementsByClassName("btn-1-engine-container")].forEach(
+      (btn) => {
+        document.getElementsByClassName("btn-1")[0].removeChild(btn);
+      }
+    );
+  }
 }
 function toggleUsername() {
   const usernameUpdateField = document.getElementsByClassName(
@@ -146,6 +158,83 @@ function changeWallpaperHandler() {
     reader.readAsDataURL(image.files[0]);
   };
   image.click();
+}
+function handleSearchEngineChange() {
+  removeBtn_1_children();
+  const searchConfig = [
+    {
+      action: "https://www.google.com/search",
+      icon: "../icons/google.png",
+      title: "Google",
+    },
+    {
+      action: "https://duckduckgo.com/",
+      icon: "../icons/duckduckgo.png",
+      title: "DuckDuckGo",
+    },
+    {
+      action: "https://www.bing.com/search",
+      icon: "../icons/bing.png",
+      title: "Bing",
+    },
+  ];
+  let container = document.getElementsByClassName("btn-1")[0];
+  let config = loadConfig();
+  searchConfig.forEach((searchEngine) => {
+    let spanBtn = document.createElement("span");
+    spanBtn.className = "btn-1-engine-container";
+    if (searchEngine.action == config.action) {
+      spanBtn.classList.add("active");
+      spanBtn.style.backgroundColor = "rgba(0, 0, 0, 0.33)";
+    } else {
+      spanBtn.addEventListener("mouseover", (event) => {
+        document.getElementById(
+          `btn-1-child-${searchEngine.title}`
+        ).style.backgroundColor = "rgba(0, 0, 0, 0.1)";
+      });
+      spanBtn.addEventListener("mouseleave", (event) => {
+        document.getElementById(
+          `btn-1-child-${searchEngine.title}`
+        ).style.backgroundColor = "white";
+      });
+      spanBtn.addEventListener("click", (event) => {
+        config.action = searchEngine.action;
+        localStorage.setItem("config", JSON.stringify(config));
+      });
+    }
+    spanBtn.style.margin = "2px 0px";
+    spanBtn.id = `btn-1-child-${searchEngine.title}`;
+    spanBtn.style.width = "300px";
+    spanBtn.style.display = "flex";
+    spanBtn.style.alignItems = "center";
+    spanBtn.style.justifyContent = "center";
+    spanBtn.style.height = "40px";
+    spanBtn.style.borderRadius = "10px";
+    spanBtn.style.padding = "0px 15px";
+    let spanChild_1 = document.createElement("span");
+    spanChild_1.style.display = "flex";
+    spanChild_1.style.alignItems = "center";
+    spanChild_1.style.justifyContent = "center";
+    spanChild_1.style.height = "100%";
+    spanChild_1.style.width = "fit-content";
+    let imageChild_1 = document.createElement("img");
+    imageChild_1.src = searchEngine.icon;
+    imageChild_1.style.height = "20px";
+    imageChild_1.style.width = "20px";
+    spanChild_1.appendChild(imageChild_1);
+    let spanChild_2 = document.createElement("span");
+    spanChild_2.style.display = "flex";
+    spanChild_2.style.alignItems = "center";
+    spanChild_2.style.justifyContent = "center";
+    spanChild_2.style.height = "100%";
+    spanChild_2.style.flexGrow = "1";
+    spanChild_2.innerText = searchEngine.title;
+    spanChild_1.appendChild(imageChild_1);
+    spanBtn.appendChild(spanChild_1);
+    spanBtn.appendChild(spanChild_2);
+    container.appendChild(spanBtn);
+  });
+  document.getElementsByClassName("btn-1")[0];
 }
 function updateSearchBtn(width) {
   if (searchBtnTimeoutHandler != -1) {
@@ -209,6 +298,24 @@ function handleFormSubmit() {
   let redirectUrl = document.getElementsByClassName("searchbar-container")[0].q
     .value;
   if (redirectUrl.length == 0) {
+    document.getElementById("searchbar-input").style.borderBottom =
+      "2px solid red";
+    document.getElementById("searchbar-input").placeholder =
+      "Please enter a valid url.";
+    document.getElementById("searchbar-input").style.color = "red";
+    document.getElementsByClassName("search-btn")[0].style.background = "red";
+    document.getElementById("searchbar-input").blur();
+    if (searchBtnTimeoutHandler != -1) {
+      clearTimeout(searchBtnTimeoutHandler);
+    }
+    searchBtnTimeoutHandler = setTimeout(() => {
+      document.getElementById("searchbar-input").style.borderBottom =
+        "1px solid white";
+      document.getElementById("searchbar-input").placeholder = "search...";
+      document.getElementById("searchbar-input").style.color = "white";
+      document.getElementsByClassName("search-btn")[0].style.background =
+        "white";
+    }, 5000);
     return;
   }
   var pattern = new RegExp(
@@ -226,7 +333,7 @@ function handleFormSubmit() {
     q.name = "q";
     q.value = redirectUrl;
     form.method = "get";
-    form.action = "https://www.google.com/search";
+    form.action = loadConfig().action;
     form.id = "delete-me-0";
     form.appendChild(q);
     document.body.appendChild(form);
@@ -347,6 +454,9 @@ document
   .addEventListener("click", () => changeWallpaperHandler());
 document
   .getElementsByClassName("btn-1")[0]
+  .addEventListener("click", () => handleSearchEngineChange());
+document
+  .getElementsByClassName("btn-1")[0]
   .addEventListener("mouseover", () =>
     enableButton("btn-1", "Change Search Engine")
   );
@@ -361,11 +471,11 @@ document
   });
 document
   .getElementsByClassName("searchbar-container")[0]
-  .addEventListener("submit", () => {
+  .addEventListener("submit", (event) => {
     event.preventDefault();
     handleFormSubmit();
   });
-document.getElementById("dialog-form").addEventListener("submit", () => {
+document.getElementById("dialog-form").addEventListener("submit", (event) => {
   event.preventDefault();
   saveLink();
 });
@@ -376,7 +486,7 @@ document
   .getElementsByClassName("username-update-icon-change")[0]
   .addEventListener("click", () => handleusernameupdate());
 document
-  .getElementsByClassName("username-update-icon-change")[0]
+  .getElementsByClassName("username-update-icon-change")[1]
   .addEventListener("click", () => toggleUsername());
 document
   .getElementsByClassName("add-btn")[0]
@@ -390,9 +500,14 @@ document
 document
   .getElementById("close-dialog-btn")
   .addEventListener("click", () => closeDialog());
-document
-  .getElementById("searchbar-input")
-  .addEventListener("focus", () => updateSearchBtn("144px"));
+document.getElementById("searchbar-input").addEventListener("focus", () => {
+  document.getElementById("searchbar-input").style.borderBottom =
+    "1px solid white";
+  document.getElementById("searchbar-input").placeholder = "search...";
+  document.getElementById("searchbar-input").style.color = "white";
+  document.getElementsByClassName("search-btn")[0].style.background = "white";
+  updateSearchBtn("144px");
+});
 document
   .getElementById("searchbar-input")
   .addEventListener("focusout", () => updateSearchBtn("60px"));
